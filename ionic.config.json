@@ -1,0 +1,7 @@
+{
+  "name": "gestor-diaria",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
