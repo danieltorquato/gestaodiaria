@@ -1,0 +1,25 @@
+<ion-content class="ion-padding">
+  <div class="login-container">
+    <h2>Bem-vindo!</h2>
+    <p>Faça login para continuar</p>
+
+    <ion-input
+      placeholder="CPF"
+      type="text"
+      [(ngModel)]="cpf"
+      (input)="onCpfChange()"
+      name="cpf"
+      maxlength="14"
+      pattern="[0-9]*"
+    ></ion-input>
+
+    <ion-input
+      placeholder="Senha"
+      type="password"
+      [(ngModel)]="senha"
+      name="senha">
+    </ion-input>
+
+    <ion-button expand="full" (click)="login()">Entrar</ion-button>
+  </div>
+</ion-content>

@@ -1,20 +1,32 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="ion-padding">
+  <div class="home-container">
+    <h2>Funcionários Disponíveis</h2>
+    <input type="date" [(ngModel)]="selectedDate" (change)="buscarPorData()" />
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- Exibir os funcionários em cards -->
+    <ion-card *ngFor="let funcionario of funcionarios">
+      <ion-card-header>
+        <ion-row class="info-card">
+          <ion-col size="4" class="photo-col">
+            <img [src]="funcionario.foto" alt="Foto do Funcionário" class="funcionario-avatar">
+          </ion-col>
+          <ion-col size="8" class="info-col">
+            <ion-card-title>{{ funcionario.nome }}</ion-card-title>
+            <ion-text class="diarias-info">
+              <strong>{{ funcionario.diarias }}</strong> <br><span class="label"> Diárias</span>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+      <!-- Botão para marcar a diária -->
+      <ion-card-content>
+        <ion-checkbox
+    [checked]="funcionario.checked"
+    (ionChange)="marcarDiaria(funcionario.id, funcionario.checked)"
+    [disabled]="funcionario.checked">
+  </ion-checkbox>
+      </ion-card-content>
+    </ion-card>
   </div>
 </ion-content>

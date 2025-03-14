@@ -1,0 +1,35 @@
+<ion-content class="ion-padding">
+  <div class="agendamentos-container">
+    <h2>Agendamentos</h2>
+
+    <!-- Formulário para adicionar um agendamento -->
+    <div class="formulario">
+      <ion-item>
+        <ion-label position="stacked">Data</ion-label>
+        <ion-datetime [(ngModel)]="data" displayFormat="DD/MM/YYYY"></ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Valor da Diária</ion-label>
+        <ion-input [(ngModel)]="valor" type="number" placeholder="Valor"></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" (click)="adicionarAgendamento()">Adicionar Agendamento</ion-button>
+    </div>
+
+    <!-- Lista de agendamentos -->
+    <ion-list>
+      <ion-item *ngFor="let agendamento of agendamentos">
+        <ion-label>
+          <h3>Data: {{ agendamento.data }}</h3>
+          <p>Valor: R$ {{ agendamento.valor }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Exibir Total de Ganhos -->
+    <div class="total">
+      <h3>Total de Ganhos: R$ {{ totalGanhos }}</h3>
+    </div>
+  </div>
+</ion-content>
