@@ -1,8 +1,6 @@
 <?php
 namespace App\Controllers;
 
-
-
 // Verificar se a requisição é do tipo OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -21,40 +19,78 @@ class FuncionarioController {
 
     // Método para retornar os funcionários com diárias
     public function getFuncionariosComDiarias() {
-        $funcionarios = $this->funcionarioModel->getAllComDiarias();
-
-        header('Content-Type: application/json');
-        echo json_encode($funcionarios);
+        try {
+            $funcionarios = $this->funcionarioModel->getAllComDiarias();
+            $this->responderJson($funcionarios);
+        } catch (\Exception $e) {
+            $this->responderErro("Erro ao buscar funcionários: " . $e->getMessage(), 500);
+        }
     }
 
     // Método para filtrar os funcionários por data
     public function getFuncionariosPorData() {
-        $data = isset($_GET['data']) ? $_GET['data'] : date('Y-m-d');
-        $funcionarios = $this->funcionarioModel->getFuncionariosPorData($data);
-
-        header('Content-Type: application/json');
-        echo json_encode($funcionarios);
+        try {
+            $data = $_GET['data'] ?? date('Y-m-d');
+            $funcionarios = $this->funcionarioModel->getFuncionariosPorData($data);
+            $this->responderJson($funcionarios);
+        } catch (\Exception $e) {
+            $this->responderErro("Erro ao filtrar funcionários: " . $e->getMessage(), 500);
+        }
     }
 
     // Método para criar uma diária
     public function criarDiaria() {
-        $data = json_decode(file_get_contents("php://input"), true);
-        $funcionarioId = $data['funcionarioId'] ?? null;
-        $dataDiaria = $data['data'] ?? null;
+        try {
+            $data = json_decode(file_get_contents("php://input"), true);
+            $funcionarioId = $data['funcionarioId'] ?? null;
+            $dataDiaria = $data['data'] ?? null;
 
-        if ($funcionarioId && $dataDiaria) {
+            if (!$funcionarioId || !$dataDiaria) {
+                $this->responderErro("Dados faltando", 400);
+                return;
+            }
+
             $diariaCriada = $this->funcionarioModel->criarDiaria($funcionarioId, $dataDiaria);
 
             if ($diariaCriada) {
-                header('Content-Type: application/json');
-                echo json_encode(["message" => "Diária marcada com sucesso"]);
+                $this->responderJson(["message" => "Diária marcada com sucesso"]);
             } else {
-                http_response_code(500);
-                echo json_encode(["message" => "Erro ao criar diária"]);
+                $this->responderErro("Erro ao criar diária", 500);
             }
-        } else {
-            http_response_code(400);
-            echo json_encode(["message" => "Dados faltando"]);
+        } catch (\Exception $e) {
+            $this->responderErro("Erro ao criar diária: " . $e->getMessage(), 500);
         }
     }
+    // Método para responder com JSON
+    private function responderJson($data, $statusCode = 200) {
+      header('Content-Type: application/json');
+      http_response_code($statusCode);
+      echo json_encode($data);
+  }
+
+  // Método para responder com erro
+  private function responderErro($mensagem, $statusCode) {
+      $this->responderJson(["message" => $mensagem], $statusCode);
+  }
+    // Método para fechar a quinzena
+    // Método para fechar a quinzena
+    public function fecharQuinzena() {
+      try {
+          $data = json_decode(file_get_contents("php://input"), true);
+          $dataFechamento = $data['data_fechamento'] ?? null;
+
+          if (empty($dataFechamento)) {
+              $this->responderErro("Data de fechamento faltando", 400);
+              return;
+          }
+
+          // Fechar a quinzena no model
+          $this->funcionarioModel->fecharQuinzena($dataFechamento);
+
+          $this->responderJson(["message" => "Quinzena fechada com sucesso"]);
+      } catch (\Exception $e) {
+          $this->responderErro("Erro ao fechar quinzena: " . $e->getMessage(), 500);
+      }
+  }
+
 }

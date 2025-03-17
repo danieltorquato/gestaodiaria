@@ -22,11 +22,25 @@
       <!-- Botão para marcar a diária -->
       <ion-card-content>
         <ion-checkbox
-    [checked]="funcionario.checked"
-    (ionChange)="marcarDiaria(funcionario.id, funcionario.checked)"
-    [disabled]="funcionario.checked">
-  </ion-checkbox>
+          [checked]="funcionario.diaria_marcada"
+          (ionChange)="marcarDiaria(funcionario.id, funcionario.diaria_marcada)"
+          [disabled]="funcionario.diaria_marcada">
+        </ion-checkbox>
       </ion-card-content>
     </ion-card>
   </div>
+
+  <!-- Botão para abrir o alerta de fechar quinzena -->
+  <ion-button expand="block" (click)="abrirAlertaFecharQuinzena()">Fechar Quinzena</ion-button>
+
+  <!-- Componente de loading -->
+  <ion-loading [isOpen]="isLoading" message="Carregando..."></ion-loading>
+
+  <!-- Componente de toast para feedback -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    [duration]="3000"
+    (didDismiss)="showToast = false">
+  </ion-toast>
 </ion-content>

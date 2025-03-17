@@ -55,6 +55,25 @@ switch ($requestUri) {
             echo json_encode(["message" => "Método não permitido para /funcionarios/diarias/listar"]);
         }
         break;
+        case '/funcionarios/quinzena/fechar':
+          if ($method === 'POST') {
+              $funcionarioController->fecharQuinzena(); // Fechar a quinzena
+          } else {
+              http_response_code(405);
+              echo json_encode(["message" => "Método não permitido para /funcionarios/fechar-quinzena"]);
+          }
+          break;
+          // routes.php
+
+// Fechar quinzena
+case '/quinzena/fechar':
+  if ($method === 'POST') {
+      $funcionarioController->fecharQuinzena();
+  } else {
+      http_response_code(405);
+      echo json_encode(["message" => "Método não permitido para /quinzena/fechar"]);
+  }
+  break;
 
     default:
         http_response_code(404);
