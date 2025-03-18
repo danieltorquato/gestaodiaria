@@ -1,6 +1,6 @@
 <?php
 namespace App\Controllers;
-
+date_default_timezone_set('America/Sao_Paulo');
 // Verificar se a requisição é do tipo OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -30,6 +30,8 @@ class FuncionarioController {
     // Método para filtrar os funcionários por data
     public function getFuncionariosPorData() {
         try {
+          date_default_timezone_set('America/Sao_Paulo');
+
             $data = $_GET['data'] ?? date('Y-m-d');
             $funcionarios = $this->funcionarioModel->getFuncionariosPorData($data);
             $this->responderJson($funcionarios);
@@ -92,5 +94,4 @@ class FuncionarioController {
           $this->responderErro("Erro ao fechar quinzena: " . $e->getMessage(), 500);
       }
   }
-
 }

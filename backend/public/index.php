@@ -1,8 +1,21 @@
 <?php
 
-header('Access-Control-Allow-Origin: *');  // Permitir todas as origens (para testes)
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS'); // Métodos permitidos
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With'); // Cabeçalhos permitidos
+// Permite acesso de qualquer origem (não recomendado para produção)
+header("Access-Control-Allow-Origin: *");
+
+// Permite métodos específicos (GET, POST, etc.)
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+
+// Permite cabeçalhos personalizados na requisição
+header("Access-Control-Allow-Headers: Content-Type");
+
+// Define o tipo de conteúdo da resposta como JSON
+header("Content-Type: application/json");
+
+// Responde a requisições OPTIONS (pré-flight do CORS)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
 
 // Verificar se a requisição é do tipo OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -10,14 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit(); // Não processar mais a requisição
 }
-
-// Requerendo os controladores necessários
 require_once __DIR__ . '/../app/Controllers/FuncionarioController.php';
-
+require_once __DIR__ . '/../app/Controllers/GastoController.php';
 use App\Controllers\FuncionarioController;
+use App\Controllers\GastoController;
+
 
 // Instanciando o controlador
 $funcionarioController = new FuncionarioController();
+$gastoController = new GastoController();
 
 // Obtendo a URI da requisição
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -64,17 +78,30 @@ switch ($requestUri) {
           }
           break;
           // routes.php
+  case '/gastos/adicionar':
+    if ($method === 'POST') {
 
-// Fechar quinzena
-case '/quinzena/fechar':
-  if ($method === 'POST') {
-      $funcionarioController->fecharQuinzena();
-  } else {
-      http_response_code(405);
-      echo json_encode(["message" => "Método não permitido para /quinzena/fechar"]);
-  }
-  break;
+        $gastoController->adicionarGasto();
+    }
+    break;
 
+case '/gastos/listar':
+    if ($method === 'GET') {
+
+        $gastoController->listarGastos();
+    }
+    break;
+case '/gastos/quinzena/fechar':
+    if ($method === 'POST') {
+        $gastoController->fecharQuinzena();
+    }
+    break;
+case '/gastos/quinzena/relatorio':
+    if ($method === 'GET') {
+        $gastoController->gerarRelatorioQuinzena();
+    }
+
+    break;
     default:
         http_response_code(404);
         echo json_encode(["message" => "Rota não encontrada"]);

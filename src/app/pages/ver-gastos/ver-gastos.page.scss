@@ -1,0 +1,28 @@
+ion-card {
+  margin-top: 20px;
+}
+
+ion-item {
+  margin-bottom: 15px;
+}
+ion-item {
+  --padding-start: 0; // Remove o padding padrão do item
+  --inner-padding-end: 0; // Remove o padding interno do item
+}
+
+.data {
+  font-size: 1.5rem; // Tamanho menor para a data
+  color: #ffffff; // Cor mais suave para a data
+}
+
+.categoria {
+  font-size: 1rem; // Tamanho padrão para a categoria
+  color: #333; // Cor escura para a categoria
+}
+
+.valor {
+  font-size: 1.8rem; // Tamanho grande para o valor
+  font-weight: bold; // Negrito para destacar o valor
+  color: #3880ff; // Cor azul para o valor
+  margin-left: auto; // Alinha o valor à direita
+}

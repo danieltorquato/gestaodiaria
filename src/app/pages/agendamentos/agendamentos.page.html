@@ -1,35 +1,57 @@
 <ion-content class="ion-padding">
-  <div class="agendamentos-container">
-    <h2>Agendamentos</h2>
+  <div class="home-container">
+    <input
+      type="date"
+      [(ngModel)]="selectedDate"
+      (change)="buscarPorData()"
+      class="custom-date-input"
+    />
 
-    <!-- Formulário para adicionar um agendamento -->
-    <div class="formulario">
-      <ion-item>
-        <ion-label position="stacked">Data</ion-label>
-        <ion-datetime [(ngModel)]="data" displayFormat="DD/MM/YYYY"></ion-datetime>
-      </ion-item>
+    <!-- Exibir os funcionários em cards -->
+    <ion-card *ngFor="let funcionario of funcionarios" class="funcionario-card">
+      <ion-card-header>
+        <ion-row class="info-card">
+          <ion-col size="4" class="photo-col">
+            <img
+              [src]="funcionario.foto"
+              alt="Foto do Funcionário"
+              class="funcionario-avatar"
+            />
+          </ion-col>
+          <ion-col size="8" class="info-col">
+            <ion-card-title>{{ funcionario.nome }}</ion-card-title>
+            <ion-text class="diarias-info">
+              <strong>{{ funcionario.diarias }}</strong> <br />
+              <span class="label"> Diárias</span>
+            </ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
 
-      <ion-item>
-        <ion-label position="stacked">Valor da Diária</ion-label>
-        <ion-input [(ngModel)]="valor" type="number" placeholder="Valor"></ion-input>
-      </ion-item>
-
-      <ion-button expand="full" (click)="adicionarAgendamento()">Adicionar Agendamento</ion-button>
-    </div>
-
-    <!-- Lista de agendamentos -->
-    <ion-list>
-      <ion-item *ngFor="let agendamento of agendamentos">
-        <ion-label>
-          <h3>Data: {{ agendamento.data }}</h3>
-          <p>Valor: R$ {{ agendamento.valor }}</p>
-        </ion-label>
-      </ion-item>
-    </ion-list>
-
-    <!-- Exibir Total de Ganhos -->
-    <div class="total">
-      <h3>Total de Ganhos: R$ {{ totalGanhos }}</h3>
-    </div>
+      <!-- Botão para marcar a diária -->
+      <ion-card-content>
+        <ion-checkbox
+          [checked]="funcionario.diaria_marcada"
+          (ionChange)="marcarDiaria(funcionario.id, funcionario.diaria_marcada)"
+          [disabled]="funcionario.diaria_marcada"
+        ></ion-checkbox>
+      </ion-card-content>
+    </ion-card>
+    <!-- Botão para abrir o alerta de fechar quinzena -->
+    <ion-button expand="block" class="btn-fechar-quinzena" (click)="abrirAlertaFecharQuinzena()">
+      Fechar Quinzena
+    </ion-button>
   </div>
+
+
+  <!-- Componente de loading -->
+  <ion-loading [isOpen]="isLoading" message="Carregando..."></ion-loading>
+
+  <!-- Componente de toast para feedback -->
+  <ion-toast
+    [isOpen]="showToast"
+    [message]="toastMessage"
+    [duration]="3000"
+    (didDismiss)="showToast = false"
+  ></ion-toast>
 </ion-content>

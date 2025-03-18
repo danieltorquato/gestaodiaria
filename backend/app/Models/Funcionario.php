@@ -4,7 +4,7 @@ namespace App\Models;
 require_once __DIR__ . '/../../config/Db.php';
 use PDO;
 use Db;
-
+date_default_timezone_set('America/Sao_Paulo');
 class Funcionario {
     private $pdo;
 
@@ -106,4 +106,23 @@ class Funcionario {
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
+    // Adiciona um novo gasto
+    public function adicionarGasto($categoria, $descricao, $valor, $data) {
+      $query = $this->pdo->prepare("
+          INSERT INTO gastos (categoria, descricao, valor, data)
+          VALUES (:categoria, :descricao, :valor, :data)
+      ");
+      $query->bindParam(':categoria', $categoria);
+      $query->bindParam(':descricao', $descricao);
+      $query->bindParam(':valor', $valor);
+      $query->bindParam(':data', $data);
+      return $query->execute();
+  }
+
+  // Retorna todos os gastos
+  public function listarGastos() {
+      $query = $this->pdo->prepare("SELECT * FROM gastos ORDER BY data DESC");
+      $query->execute();
+      return $query->fetchAll(PDO::FETCH_ASSOC);
+  }
 }

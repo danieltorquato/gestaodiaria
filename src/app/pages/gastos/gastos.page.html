@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gastos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>Selecione a categoria do gasto:</h2>
+
+  <!-- Grid de ícones -->
+  <ion-grid>
+    <ion-row>
+      <!-- Gasolina -->
+      <ion-col size="6" (click)="abrirInserirGasto('gasolina')">
+        <ion-card class="categoria-card">
+          <ion-icon name="car" class="categoria-icon"></ion-icon>
+          <ion-label>Gasolina</ion-label>
+        </ion-card>
+      </ion-col>
+
+      <!-- Alimentação -->
+      <ion-col size="6" (click)="abrirInserirGasto('alimentacao')">
+        <ion-card class="categoria-card">
+          <ion-icon name="restaurant" class="categoria-icon"></ion-icon>
+          <ion-label>Alimentação</ion-label>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <!-- Pedágio -->
+      <ion-col size="6" (click)="abrirInserirGasto('pedagio')">
+        <ion-card class="categoria-card">
+          <ion-icon name="card" class="categoria-icon"></ion-icon>
+          <ion-label>Pedágio</ion-label>
+        </ion-card>
+      </ion-col>
+
+      <!-- Estacionamento -->
+      <ion-col size="6" (click)="abrirInserirGasto('estacionamento')">
+        <ion-card class="categoria-card">
+          <ion-icon name="pin" class="categoria-icon"></ion-icon>
+          <ion-label>Estacionamento</ion-label>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <!-- Outros -->
+      <ion-col size="6" (click)="abrirInserirGasto('outros')">
+        <ion-card class="categoria-card">
+          <ion-icon name="cash" class="categoria-icon"></ion-icon>
+          <ion-label>Outros</ion-label>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" (click)="abrirVerGastos()">
+        <ion-card class="categoria-card">
+          <ion-icon name="eye" class="categoria-icon"></ion-icon>
+          <ion-label>Ver Gastos</ion-label>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

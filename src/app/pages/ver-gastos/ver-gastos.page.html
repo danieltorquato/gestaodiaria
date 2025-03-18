@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/gastos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gastos</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+<h2>Gastos dessa quinzena</h2>
+  <!-- Lista de gastos -->
+  <ion-list>
+    <input
+    type="date"
+    [(ngModel)]="data_fechamento"
+    hidden
+    class="custom-date-input"
+  />
+    <ion-item *ngFor="let gasto of gastos">
+      <ion-icon [name]="getIcone(gasto.categoria)" slot="start"></ion-icon>
+      <ion-label>
+        <!-- Data à esquerda -->
+        <div class="data">{{ gasto.data | date:'dd/MM/yyyy' }}</div>
+        <!-- Categoria menor -->
+        <div class="categoria">{{ gasto.categoria | titlecase }}</div>
+      </ion-label>
+      <!-- Valor à direita -->
+      <div slot="end" class="valor">{{ gasto.valor | currency:'BRL' }}</div>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="block" (click)="fecharQuinzena()">Fechar Quinzena</ion-button>
+</ion-content>
