@@ -6,7 +6,7 @@ use PDO;
 use Db;
 date_default_timezone_set('America/Sao_Paulo');
 class Funcionario {
-    private $pdo;
+    public $pdo;
 
     public function __construct() {
         $db = new Db();
@@ -43,61 +43,79 @@ class Funcionario {
         return $funcionarios;
     }
 
-    // Método para criar uma diária
-    public function criarDiaria($funcionarioId, $data) {
-        $query = $this->pdo->prepare("INSERT INTO diarias (funcionario_id, data) VALUES (:funcionario_id, :data)");
-        $query->bindParam(':funcionario_id', $funcionarioId);
-        $query->bindParam(':data', $data);
-        $resultado = $query->execute();
-
-    if ($resultado) {
-      // Incrementar a coluna diarias na tabela funcionarios
-      $queryIncremento = $this->pdo->prepare("UPDATE funcionarios SET diarias = diarias + 1 WHERE id = :funcionario_id");
-      $queryIncremento->bindParam(':funcionario_id', $funcionarioId);
-      $queryIncremento->execute();
-  }
-  return $resultado;
-    }
-    // Método para fechar a quinzena
-   // Método para fechar a quinzena
-   public function fecharQuinzena($dataFechamento) {
+    public function adicionarDiaria($funcionarioId, $data) {
     try {
-        // Iniciar uma transação para garantir consistência
         $this->pdo->beginTransaction();
 
-        // Passo 1: Mover as diárias para o histórico
-        $queryMoverDiarias = $this->pdo->prepare("
-            INSERT INTO historico_diarias (funcionario_id, data, valor_diaria, data_fechamento)
-            SELECT d.funcionario_id, d.data, f.valor_diaria, :data_fechamento
-            FROM diarias d
-            INNER JOIN funcionarios f ON d.funcionario_id = f.id
-        ");
-        $queryMoverDiarias->bindParam(':data_fechamento', $dataFechamento);
-        $queryMoverDiarias->execute();
+        // Inserir a diária na tabela 'diarias'
+        $query = "INSERT INTO diarias (funcionario_id, data) VALUES (:funcionario_id, :data)";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':funcionario_id', $funcionarioId, PDO::PARAM_INT);
+        $stmt->bindParam(':data', $data, PDO::PARAM_STR);
+        $stmt->execute();
 
-        // Passo 2: Zerar a tabela diarias
-        $queryZerarDiarias = $this->pdo->prepare("
-            DELETE FROM diarias
-        ");
-        $queryZerarDiarias->execute();
+        // Atualizar o número de diárias na tabela 'funcionarios'
+        $queryUpdate = "UPDATE funcionarios SET diarias = diarias + 1 WHERE id = :funcionario_id";
+        $stmtUpdate = $this->pdo->prepare($queryUpdate);
+        $stmtUpdate->bindParam(':funcionario_id', $funcionarioId, PDO::PARAM_INT);
+        $stmtUpdate->execute();
 
-        // Passo 3: Registrar a quinzena fechada
-        $queryQuinzena = $this->pdo->prepare("
-            INSERT INTO quinzenas (data_fechamento, fechado)
-            VALUES (:data_fechamento, 1)
-        ");
-        $queryQuinzena->bindParam(':data_fechamento', $dataFechamento);
-        $queryQuinzena->execute();
-
-        // Commit da transação
         $this->pdo->commit();
-
         return true;
     } catch (\Exception $e) {
-        // Rollback em caso de erro
         $this->pdo->rollBack();
-        throw new \Exception("Erro ao fechar quinzena: " . $e->getMessage());
+        file_put_contents('log_diaria.txt', "Erro ao adicionar diária: " . $e->getMessage() . "\n", FILE_APPEND);
+        return false;
     }
+}
+
+
+
+public function fecharQuinzena($dataFechamento) {
+  try {
+      // Iniciar uma transação para garantir consistência
+      $this->pdo->beginTransaction();
+
+      // Passo 1: Mover as diárias para o histórico
+      $queryMoverDiarias = $this->pdo->prepare("
+          INSERT INTO historico_diarias (funcionario_id, data, valor_diaria, data_fechamento)
+          SELECT d.funcionario_id, d.data, f.valor_diaria, :data_fechamento
+          FROM diarias d
+          INNER JOIN funcionarios f ON d.funcionario_id = f.id
+      ");
+      $queryMoverDiarias->bindParam(':data_fechamento', $dataFechamento);
+      $queryMoverDiarias->execute();
+
+      // Passo 2: Zerar a tabela diarias
+      $queryZerarDiarias = $this->pdo->prepare("
+          DELETE FROM diarias
+      ");
+      $queryZerarDiarias->execute();
+
+      // Passo 3: Registrar a quinzena fechada
+      $queryQuinzena = $this->pdo->prepare("
+          INSERT INTO quinzenas (data_fechamento, fechado)
+          VALUES (:data_fechamento, 1)
+      ");
+      $queryQuinzena->bindParam(':data_fechamento', $dataFechamento);
+      $queryQuinzena->execute();
+
+      // Passo4: Atualizar o número de diárias dos funcionários
+      $queryAtualizarDiarias = $this->pdo->prepare("
+          UPDATE funcionarios
+          SET diarias = 0
+      ");
+      $queryAtualizarDiarias->execute();
+
+      // Commit da transação
+      $this->pdo->commit();
+
+      return true;
+  } catch (\Exception $e) {
+      // Rollback em caso de erro
+      $this->pdo->rollBack();
+      throw new \Exception("Erro ao fechar quinzena: " . $e->getMessage());
+  }
 }
 
     // Método para obter a última quinzena

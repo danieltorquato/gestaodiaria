@@ -1,6 +1,7 @@
+import { environment } from 'src/environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonThumbnail, IonHeader, IonList, IonItem, IonLabel, IonCol, IonRow, IonText, IonAvatar, IonDatetime, IonIcon, IonDatetimeButton, IonModal, IonCheckbox, IonToolbar, IonTitle, IonButtons, IonLoading, IonToast } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonThumbnail, IonHeader, IonList, IonItem, IonLabel, IonCol, IonRow, IonText, IonAvatar, IonDatetime, IonIcon, IonDatetimeButton, IonModal, IonCheckbox, IonToolbar, IonTitle, IonButtons, IonLoading, IonToast, IonBackButton } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgModel } from '@angular/forms';
@@ -14,7 +15,7 @@ import moment from 'moment-timezone';
   templateUrl: './agendamentos.page.html',
   styleUrls: ['./agendamentos.page.scss'],
   standalone: true,
-    imports: [IonToast, IonLoading, IonCheckbox, IonText, IonRow, IonCol, IonContent, IonCard, IonCardHeader, IonCardTitle, IonText, IonCardContent, CommonModule, IonCheckbox, FormsModule, IonButton, IonButton, IonCol, IonRow, IonText],
+    imports: [IonBackButton, IonToast, IonLoading, IonCheckbox, IonText, IonRow, IonCol, IonContent, IonCard, IonCardHeader, IonCardTitle, IonText, IonCardContent, CommonModule, IonCheckbox, FormsModule, IonButton, IonButton, IonCol, IonRow, IonText, IonHeader, IonToolbar, IonButtons, IonTitle],
   })
 export class AgendamentosPage implements OnInit {
   selectedDate: string = ""; // Variável para armazenar a data selecionada
@@ -35,6 +36,7 @@ export class AgendamentosPage implements OnInit {
 
 
     this.selectedDate = today.format('YYYY-MM-DD').toString().split('T')[0]; // Garante que a data é formatada corretamente
+
 console.log(this.selectedDate);
 
     this.funcionariosService.getFuncionariosComDiarias(this.selectedDate).subscribe(data => {
@@ -53,7 +55,7 @@ async buscarPorData() {
   console.log('Buscando funcionários por data:', this.selectedDate); // Log para depuração
 
   try {
-    const url = `http://localhost:8000/funcionarios?data=${this.selectedDate}`;
+    const url = `${environment.apiUrl}/funcionarios?data=${this.selectedDate}`;
     console.log('URL da requisição:', url); // Log para depuração
 
     const response = await this.http.get<any[]>(url).toPromise();
@@ -69,38 +71,53 @@ async buscarPorData() {
   }
 }
 
-// Método para marcar diária
 async marcarDiaria(funcionarioId: number, checked: boolean) {
-  if (checked) {
-    this.mostrarToast('Funcionário já tem diária marcada');
-    return;
-  }
+
 
   this.isLoading = true;
   try {
-    const url = 'http://localhost:8000/funcionarios/diarias/criar';
-    const data = { funcionarioId, data: this.selectedDate };
-    await this.http.post(url, data).toPromise();
-    this.mostrarToast('Diária marcada com sucesso');
-    this.buscarPorData(); // Atualiza a lista de funcionários
+    const url = `${environment.apiUrl}/funcionarios/diarias/criar`;
+    const data = { funcionario_id: funcionarioId, data: this.selectedDate };
+
+    console.log('🔵 URL da requisição:', url);
+    console.log('🟢 Dados da requisição:', JSON.stringify(data));
+
+    const response: any = await this.http.post(url, data).toPromise();
+    console.log('🟡 Resposta do servidor:', response);
+
+    if (response && response.diarias !== undefined) {
+      // Atualiza SOMENTE o funcionário e SOMENTE para a data selecionada
+      this.funcionarios = this.funcionarios.map(f =>
+        f.id === funcionarioId ? { ...f, diaria_marcada: true, diarias: response.diarias } : f
+      );
+      this.buscarPorData(); // Atualiza a lista de funcionários
+      this.mostrarToast('Diária marcada com sucesso');
+    } else {
+      this.mostrarToast('Erro ao marcar diária');
+    }
   } catch (error) {
     this.mostrarToast('Erro ao marcar diária');
-    console.error('Erro ao marcar diária:', error);
+    console.error('🔴 Erro ao marcar diária:', error);
   } finally {
     this.isLoading = false;
   }
 }
+
+
+
+
 
 // Método para fechar quinzena
 // Método para fechar quinzena
 async fecharQuinzena() {
   this.isLoading = true;
   try {
-    const url = 'http://localhost:8000/funcionarios/quinzena/fechar';
+    const url = `${environment.apiUrl}/funcionarios/quinzena/fechar`;
     const data = {
       data_fechamento: new Date().toISOString().split('T')[0], // Data atual
     };
     await this.http.post(url, data).toPromise();
+    this.buscarPorData(); // Atualiza a lista de funcionários
     this.mostrarToast('Quinzena fechada com sucesso');
   } catch (error) {
     this.mostrarToast('Erro ao fechar quinzena');

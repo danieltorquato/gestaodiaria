@@ -1,0 +1,6 @@
+Array
+(
+    [funcionario_id] => 2
+    [data] => 2025-03-18
+)
+SQL Executado: INSERT INTO diarias (funcionario_id, data) VALUES (:funcionario_id, :data) com valores: funcionario_id = 2, data = 2025-03-18

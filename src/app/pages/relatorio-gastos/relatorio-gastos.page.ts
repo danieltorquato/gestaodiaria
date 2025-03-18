@@ -5,6 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonList, IonLabel
 import { HttpClient } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-relatorio-gastos',
@@ -18,6 +19,9 @@ export class RelatorioGastosPage implements OnInit {
 relatorio: any = {};
 totalGasto: number = 0;
   data_fechamento: string = '';
+  url:any;
+  quinzenas = []; // Lista de quinzenas que você pode carregar via API ou inicializar manualmente
+  id_quinzena: number | undefined;
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -28,13 +32,19 @@ totalGasto: number = 0;
     moment.tz.setDefault('America/Sao_Paulo');
     const today = moment().tz('America/Sao_Paulo');
     this.data_fechamento = today.format('YYYY-MM-DD').toString().split('T')[0];
+    this.url = environment.apiUrl;
     this.carregarRelatorio();
+
 
   }
 
-  carregarRelatorio() {
-    // const dataFechamento = this.route.snapshot.queryParams['data_fechamento'];
-    this.http.get(`http://localhost:8000/gastos/quinzena/relatorio?data_fechamento=${this.data_fechamento}`).subscribe(
+
+  // No seu arquivo TypeScript para o frontend
+carregarRelatorio() {
+  const dataFechamento = this.data_fechamento;  // Obtendo a data de fechamento
+
+  if (dataFechamento) {
+    this.http.get(`${environment.apiUrl}/gastos/quinzena/relatorio?data_fechamento=${dataFechamento}`).subscribe(
       (response: any) => {
         // Certifique-se de que os valores sejam números
         this.relatorio = {
@@ -50,7 +60,12 @@ totalGasto: number = 0;
         console.error('Erro ao carregar relatório:', error);
       }
     );
+  } else {
+    console.error('Data de fechamento não informada');
   }
+}
+
+
   // Method to get the icon based on the category
   getIcone(categoria: string): string {
     const icones: { [key: string]: string } = {

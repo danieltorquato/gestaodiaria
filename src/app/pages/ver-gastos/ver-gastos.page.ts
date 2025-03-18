@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonList, IonLabel, IonIcon, IonButton, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonBackButton, IonButtons } from '@ionic/angular/standalone';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-ver-gastos',
@@ -18,14 +19,16 @@ export class VerGastosPage implements OnInit {
   data: string = new Date().toISOString();
   gastos: any[] = [];
   data_fechamento: string = '';
+  url:any;
   constructor( private http: HttpClient,     private router: Router,) { }
 
   ngOnInit() {
+     this.url = environment.apiUrl;
     this.carregarGastos();
   }
  // Carrega a lista de gastos
  carregarGastos() {
-  this.http.get('http://localhost:8000/gastos/listar').subscribe(
+  this.http.get(`${this.url}/gastos/listar`).subscribe(
     (response: any) => {
       this.gastos = response;
     },
@@ -47,7 +50,7 @@ getIcone(categoria: string): string {
 }
 fecharQuinzena() {
   const dataFechamento = new Date().toISOString().split('T')[0]; // Data atual
-  this.http.post('http://localhost:8000/gastos/quinzena/fechar', { data_fechamento: dataFechamento }).subscribe(
+  this.http.post(`${this.url}/gastos/quinzena/fechar`, { data_fechamento: dataFechamento }).subscribe(
     (response) => {
       console.log('Quinzena fechada:', response);
 this.router.navigate(['/relatorio-gastos']);

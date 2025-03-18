@@ -4,14 +4,15 @@ import { InserirGastoPage } from './pages/inserir-gasto/inserir-gasto.page';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-  },
-  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'home',
+    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+  },
+
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
@@ -30,7 +31,8 @@ export const routes: Routes = [
   },
   { path: 'gastos', component: GastosPage },
   { path: 'inserir-gasto/:categoria', component: InserirGastoPage },
-  { path: '', redirectTo: '/gastos', pathMatch: 'full' },  {
+  { path: '', redirectTo: '/gastos', pathMatch: 'full' },
+  {
     path: 'ver-gastos',
     loadComponent: () => import('./pages/ver-gastos/ver-gastos.page').then( m => m.VerGastosPage)
   },

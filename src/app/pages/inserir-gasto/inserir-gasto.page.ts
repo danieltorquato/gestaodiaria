@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgModel } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import moment from 'moment';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-inserir-gasto',
@@ -18,7 +19,7 @@ export class InserirGastoPage implements OnInit {
   valor: number | null = null;
   data: string = "";
   gastos: any[] = [];
-
+url: any;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -26,10 +27,9 @@ export class InserirGastoPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.url = environment.apiUrl;
      moment.tz.setDefault('America/Sao_Paulo');
         const today = moment().tz('America/Sao_Paulo');
-
-
         this.data = today.format('YYYY-MM-DD').toString().split('T')[0];
     // Obtém a categoria passada pela navegação
     this.categoria = this.route.snapshot.paramMap.get('categoria') || '';
@@ -44,7 +44,7 @@ export class InserirGastoPage implements OnInit {
       data: this.data,
     };
 
-    this.http.post('http://localhost:8000/gastos/adicionar', gasto).subscribe(
+    this.http.post(`${this.url}/gastos/adicionar`, gasto).subscribe(
       (response) => {
         console.log('Gasto salvo:', response);
         this.router.navigate(['/gastos']); // Volta para a tela de gastos
@@ -59,7 +59,7 @@ export class InserirGastoPage implements OnInit {
   }
   // Carrega a lista de gastos
   carregarGastos() {
-    this.http.get('http://localhost:8000/gastos/listar').subscribe(
+    this.http.get(`${this.url}/gastos/listar`).subscribe(
       (response: any) => {
         this.gastos = response;
       },

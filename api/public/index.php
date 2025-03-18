@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit(); // Não processar mais a requisição
 }
+
 require_once __DIR__ . '/../app/Controllers/FuncionarioController.php';
 require_once __DIR__ . '/../app/Controllers/GastoController.php';
 use App\Controllers\FuncionarioController;
 use App\Controllers\GastoController;
-
 
 // Instanciando o controlador
 $funcionarioController = new FuncionarioController();
@@ -35,6 +35,7 @@ $gastoController = new GastoController();
 
 // Obtendo a URI da requisição
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$requestUri = str_replace('/gestordiaria/api', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Definindo as rotas
@@ -69,39 +70,51 @@ switch ($requestUri) {
             echo json_encode(["message" => "Método não permitido para /funcionarios/diarias/listar"]);
         }
         break;
-        case '/funcionarios/quinzena/fechar':
-          if ($method === 'POST') {
-              $funcionarioController->fecharQuinzena(); // Fechar a quinzena
+
+    // Fechar a quinzena de um funcionário
+    case '/funcionarios/quinzena/fechar':
+        if ($method === 'POST') {
+            $funcionarioController->fecharQuinzena();
+        } else {
+            http_response_code(405);
+            echo json_encode(["message" => "Método não permitido para /funcionarios/quinzena/fechar"]);
+        }
+        break;
+
+    // Adicionar gasto
+    case '/gastos/adicionar':
+        if ($method === 'POST') {
+            $gastoController->adicionarGasto();
+        }
+        break;
+
+    // Listar gastos
+    case '/gastos/listar':
+        if ($method === 'GET') {
+            $gastoController->listarGastos();
+        }
+        break;
+
+    // Fechar a quinzena de gastos
+    case '/gastos/quinzena/fechar':
+        if ($method === 'POST') {
+            $gastoController->fecharQuinzena();
+        }
+        break;
+
+    // Gerar relatório de gastos da quinzena com base na data de fechamento
+    case '/gastos/quinzena/relatorio':
+      if ($method === 'GET') {
+          $dataFechamento = $_GET['data_fechamento'] ?? null; // Recupera a data de fechamento dos parâmetros da URL
+          if ($dataFechamento) {
+              $gastoController->gerarRelatorioQuinzena($dataFechamento);
           } else {
-              http_response_code(405);
-              echo json_encode(["message" => "Método não permitido para /funcionarios/fechar-quinzena"]);
+              http_response_code(400);
+              echo json_encode(["message" => "Parâmetro data_fechamento é obrigatório"]);
           }
-          break;
-          // routes.php
-  case '/gastos/adicionar':
-    if ($method === 'POST') {
+      }
+      break;
 
-        $gastoController->adicionarGasto();
-    }
-    break;
-
-case '/gastos/listar':
-    if ($method === 'GET') {
-
-        $gastoController->listarGastos();
-    }
-    break;
-case '/gastos/quinzena/fechar':
-    if ($method === 'POST') {
-        $gastoController->fecharQuinzena();
-    }
-    break;
-case '/gastos/quinzena/relatorio':
-    if ($method === 'GET') {
-        $gastoController->gerarRelatorioQuinzena();
-    }
-
-    break;
     default:
         http_response_code(404);
         echo json_encode(["message" => "Rota não encontrada"]);

@@ -2,21 +2,21 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FuncionariosService {
-
-  private apiUrl = 'http://localhost:8000/funcionarios'; // Ajuste conforme seu backend
-
+ // Ajuste conforme seu backend
+  private apiFuncionarios = `${environment.apiUrl}/funcionarios`;
   constructor(private http: HttpClient) { }
 
   getFuncionariosComDiarias(data: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}?data=${data}`);
+    return this.http.get(`${this.apiFuncionarios}?data=${data}`);
   }
   marcarDiaria(funcionarioId: number, data: string): Observable<any> {
     const body = { funcionarioId, data }; // Dados para enviar
-    return this.http.post(`${this.apiUrl}/diarias/criar`, body);  // Corrigido a sintaxe aqui
+    return this.http.post(`${this.apiFuncionarios}/diarias/criar`, body);  // Corrigido a sintaxe aqui
   }
 }

@@ -2,12 +2,18 @@
 
 namespace App\Controllers;
 require_once __DIR__ . '/../models/Gasto.php';
+require_once __DIR__ . '/../../config/Db.php';
 use App\Models\GastoModel;
+use PDO;
+use Db;
 
 class GastoController {
     private $gastoModel;
+    private $pdo;
 
     public function __construct() {
+      $db = new Db();
+      $this->pdo = $db->getConnection();
         $this->gastoModel = new GastoModel();
     }
 
@@ -47,6 +53,7 @@ class GastoController {
 
       if ($dataFechamento) {
           $resultado = $this->gastoModel->fecharQuinzena($dataFechamento);
+
           if ($resultado) {
               echo json_encode(["message" => "Quinzena fechada com sucesso"]);
           } else {
@@ -59,23 +66,31 @@ class GastoController {
       }
   }
   // Gera um relatório da quinzena
-  public function gerarRelatorioQuinzena() {
-    $data = json_decode(file_get_contents("php://input"), true);
-    $dataFechamento = $data['data_fechamento'] ?? date('Y-m-d');
+  // No seu Controller (ex: GastoController.php ou QuinzenaController.php)
+// No GastoController.php
+public function gerarRelatorioQuinzena($dataFechamento) {
+  try {
+      // Passo 1: Buscar os gastos com base na data de fechamento usando o Model
+      $gastos = $this->gastoModel->buscarGastosPorDataFechamento($dataFechamento);
 
-
-    if ($dataFechamento) {
-      $relatorio = $this->gastoModel->gerarRelatorioQuinzena($dataFechamento);
-      if ($relatorio) {
-        echo json_encode($relatorio);
-
-      } else {
-        http_response_code(500);
-        echo json_encode(["message" => "Erro ao gerar relatório"]);
+      // Verifica se encontrou gastos
+      if (empty($gastos)) {
+          throw new \Exception("Nenhum gasto encontrado para a quinzena com data de fechamento: " . $dataFechamento);
       }
-    } else {
-      http_response_code(400);
-      echo json_encode(["message" => "Datas de início e fim são obrigatórias"]);
-    }
+
+      // Passo 2: Calcular o total gasto na quinzena usando o Model
+      $totalGasto = $this->gastoModel->calcularTotalGasto($gastos);
+
+      // Passo 3: Retornar o relatório com os gastos e o total
+      echo json_encode([
+          'gastos' => $gastos,
+          'total_gasto' => $totalGasto
+      ]);
+  } catch (\Exception $e) {
+      http_response_code(500);
+      echo json_encode(["message" => "Erro ao gerar relatório quinzenal: " . $e->getMessage()]);
   }
+}
+
+
 }
