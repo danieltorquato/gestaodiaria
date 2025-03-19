@@ -19,4 +19,9 @@ export class FuncionariosService {
     const body = { funcionarioId, data }; // Dados para enviar
     return this.http.post(`${this.apiFuncionarios}/diarias/criar`, body);  // Corrigido a sintaxe aqui
   }
+
+  criarFuncionario(nome: string, foto: string, valorDiaria: number): Observable<any> {
+    const funcionario = { nome, foto, valor_diaria: valorDiaria };
+    return this.http.post(`${this.apiFuncionarios}/criar`, funcionario);
+  }
 }

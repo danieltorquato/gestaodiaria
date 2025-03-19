@@ -1,40 +1,32 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/ver-gastos"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Relatório de Gastos</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Relatório da Quinzena</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-list>
-            <input
-    type="date"
-    [(ngModel)]="data_fechamento"
-    hidden
-    class="custom-date-input"
-  />
-        <ion-item *ngFor="let gasto of relatorio.gastos">
-          <ion-icon [name]="getIcone(gasto.categoria)" slot="start"></ion-icon>
-          <ion-label>
-            <h2>{{ gasto.categoria }}</h2>
-            <p>{{ gasto.descricao }}</p>
-            <p>{{ gasto.data | date }}</p>
-          </ion-label>
-          <ion-label slot="end">{{ gasto.valor| currency:'BRL' }}</ion-label>
-        </ion-item>
-      </ion-list>
-      <ion-item>
-        <ion-label><strong>Total Gasto:</strong></ion-label>
-        <ion-label slot="end">{{ totalGasto | currency:'BRL' }}</ion-label>
-      </ion-item>
-    </ion-card-content>
-  </ion-card>
-  <ion-button>Compartilhar</ion-button>
-</ion-content>
+<ion-accordion-group [multiple]="true">
+  <ion-accordion *ngFor="let quinzena of quinzenas; let i = index" (ionChange)="carregarRelatorio(quinzena.data_fechamento, i)">
+    <ion-item slot="header" color="light">
+      <ion-label>{{ quinzena.data_fechamento }}</ion-label>
+    </ion-item>
+    <div class="ion-padding" slot="content">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Relatório da Quinzena</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list *ngIf="relatorios[i]">
+            <ion-item *ngFor="let gasto of relatorios[i].gastos">
+              <ion-icon [name]="getIcone(gasto.categoria)" slot="start"></ion-icon>
+              <ion-label>
+                <h2>{{ gasto.categoria }}</h2>
+                <p>{{ gasto.descricao }}</p>
+                <p>{{ gasto.data }}</p>
+              </ion-label>
+              <ion-label slot="end">{{ gasto.valor | currency:'BRL' }}</ion-label>
+            </ion-item>
+          </ion-list>
+          <ion-item *ngIf="relatorios[i]">
+            <ion-label><strong>Total Gasto:</strong></ion-label>
+            <ion-label slot="end">{{ relatorios[i].totalGasto | currency:'BRL' }}</ion-label>
+          </ion-item>
+        </ion-card-content>
+        <ion-button expand="block" style="margin-bottom: 5px;">Compartilhar</ion-button>
+      </ion-card>
+    </div>
+  </ion-accordion>
+</ion-accordion-group>

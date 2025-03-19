@@ -1,0 +1,59 @@
+/* Estilizando o conteúdo */
+ion-content {
+  --background: #f4f7fc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilizando os itens do formulário */
+ion-item {
+  margin-bottom: 20px;
+}
+
+/* Título do formulário */
+ion-title {
+  font-size: 24px;
+  color: #4A90E2;
+  text-align: center;
+  padding: 10px;
+}
+
+/* Estilo do botão de envio */
+.submit-button {
+  background-color: #4A90E2;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+/* Estilo do botão quando em hover */
+.submit-button:hover {
+  background-color: #357ABD;
+}
+
+/* Mensagens de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Mensagem de sucesso */
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+/* Estilizando a imagem selecionada */
+img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 10px;
+}

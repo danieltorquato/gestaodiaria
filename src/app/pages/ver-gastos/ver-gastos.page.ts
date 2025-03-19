@@ -60,4 +60,7 @@ this.router.navigate(['/relatorio-gastos']);
     }
   );
 }
+navigateTo(page: string) {
+  this.router.navigate([`/${page}`]);
+}
 }

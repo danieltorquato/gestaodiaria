@@ -1,7 +1,7 @@
 import { environment } from 'src/environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonThumbnail, IonHeader, IonList, IonItem, IonLabel, IonCol, IonRow, IonText, IonAvatar, IonDatetime, IonIcon, IonDatetimeButton, IonModal, IonCheckbox, IonToolbar, IonTitle, IonButtons, IonLoading, IonToast, IonBackButton } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonThumbnail, IonHeader, IonList, IonItem, IonLabel, IonCol, IonRow, IonText, IonAvatar, IonDatetime, IonIcon, IonDatetimeButton, IonModal, IonCheckbox, IonToolbar, IonTitle, IonButtons, IonLoading, IonToast, IonBackButton, IonFab, IonFabButton } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgModel } from '@angular/forms';
@@ -15,7 +15,7 @@ import moment from 'moment-timezone';
   templateUrl: './agendamentos.page.html',
   styleUrls: ['./agendamentos.page.scss'],
   standalone: true,
-    imports: [IonBackButton, IonToast, IonLoading, IonCheckbox, IonText, IonRow, IonCol, IonContent, IonCard, IonCardHeader, IonCardTitle, IonText, IonCardContent, CommonModule, IonCheckbox, FormsModule, IonButton, IonButton, IonCol, IonRow, IonText, IonHeader, IonToolbar, IonButtons, IonTitle],
+    imports: [IonFabButton, IonIcon,IonFab, IonBackButton, IonToast, IonLoading, IonCheckbox, IonText, IonRow, IonCol, IonContent, IonCard, IonCardHeader, IonCardTitle, IonText, IonCardContent, CommonModule, IonCheckbox, FormsModule, IonButton, IonButton, IonCol, IonRow, IonText, IonHeader, IonToolbar, IonButtons, IonTitle],
   })
 export class AgendamentosPage implements OnInit {
   selectedDate: string = ""; // Variável para armazenar a data selecionada
@@ -156,5 +156,9 @@ async abrirAlertaFecharQuinzena() {
   });
 
   await alert.present();
+}
+
+navigateTo(page: string) {
+  this.router.navigate([`/${page}`]);
 }
 }

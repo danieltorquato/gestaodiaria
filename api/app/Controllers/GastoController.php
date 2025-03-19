@@ -68,29 +68,36 @@ class GastoController {
   // Gera um relatório da quinzena
   // No seu Controller (ex: GastoController.php ou QuinzenaController.php)
 // No GastoController.php
-public function gerarRelatorioQuinzena($dataFechamento) {
-  try {
-      // Passo 1: Buscar os gastos com base na data de fechamento usando o Model
-      $gastos = $this->gastoModel->buscarGastosPorDataFechamento($dataFechamento);
+public function gerarRelatorioQuinzena() {
+  $dataFechamento = $_GET['data_fechamento'] ?? null;
 
-      // Verifica se encontrou gastos
-      if (empty($gastos)) {
-          throw new \Exception("Nenhum gasto encontrado para a quinzena com data de fechamento: " . $dataFechamento);
-      }
+  if (!$dataFechamento) {
+      http_response_code(400);
+      echo json_encode(["message" => "Parâmetro data_fechamento é obrigatório"]);
+      return;
+  }
 
-      // Passo 2: Calcular o total gasto na quinzena usando o Model
-      $totalGasto = $this->gastoModel->calcularTotalGasto($gastos);
+  $relatorio = $this->gastoModel->getRelatorioPorData($dataFechamento);
 
-      // Passo 3: Retornar o relatório com os gastos e o total
-      echo json_encode([
-          'gastos' => $gastos,
-          'total_gasto' => $totalGasto
-      ]);
-  } catch (\Exception $e) {
-      http_response_code(500);
-      echo json_encode(["message" => "Erro ao gerar relatório quinzenal: " . $e->getMessage()]);
+  if ($relatorio) {
+      echo json_encode($relatorio);
+  } else {
+      http_response_code(404);
+      echo json_encode(["message" => "Nenhum gasto encontrado para a quinzena"]);
   }
 }
 
+
+public function listarQuinzenas() {
+
+
+  $quinzenas = $this->gastoModel->listarQuinzenas();
+
+  if ($quinzenas) {
+      echo json_encode($quinzenas);
+  } else {
+      echo json_encode([]);
+  }
+}
 
 }

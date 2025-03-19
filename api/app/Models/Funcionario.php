@@ -143,4 +143,16 @@ public function fecharQuinzena($dataFechamento) {
       $query->execute();
       return $query->fetchAll(PDO::FETCH_ASSOC);
   }
+  public function criarFuncionario($nome, $foto, $valorDiaria) {
+    try {
+        $query = $this->pdo->prepare("INSERT INTO funcionarios (nome, foto, valor_diaria) VALUES (:nome, :foto, :valor_diaria)");
+        $query->bindParam(':nome', $nome);
+        $query->bindParam(':foto', $foto);
+        $query->bindParam(':valor_diaria', $valorDiaria);
+        $query->execute();
+        return true;
+    } catch (\Exception $e) {
+        throw new \Exception("Erro ao criar funcionário: " . $e->getMessage());
+    }
+}
 }

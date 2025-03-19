@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Criar Funcionário</ion-title>
+  </ion-toolbar>
+</ion-header>
+<form #formulario="ngForm" (ngSubmit)="criarFuncionario(formulario)">
+  <ion-item>
+    <ion-label position="stacked">Nome</ion-label>
+    <ion-input name="nome" [(ngModel)]="funcionario.nome" required></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Valor da Diária</ion-label>
+    <ion-input name="valorDiaria" [(ngModel)]="funcionario.valorDiaria" type="number" required></ion-input>
+  </ion-item>
+
+   <!-- Campo de foto -->
+   <ion-item>
+    <ion-label position="stacked">Foto</ion-label>
+    <ion-button (click)="selecionarFoto()">Escolher Foto</ion-button>
+    <div *ngIf="funcionario.foto">
+      <img [src]="funcionario.foto" alt="Foto do Funcionário" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px;">
+    </div>
+  </ion-item>
+
+  <ion-button expand="full" type="submit" [disabled]="!formulario.valid">Criar Funcionário</ion-button>
+</form>

@@ -39,6 +39,22 @@ export const routes: Routes = [
   {
     path: 'relatorio-gastos',
     loadComponent: () => import('./pages/relatorio-gastos/relatorio-gastos.page').then( m => m.RelatorioGastosPage)
+  },  {
+    path: 'compartilhar-gastos',
+    loadComponent: () => import('./pages/compartilhar-gastos/compartilhar-gastos.page').then( m => m.CompartilharGastosPage)
   },
+  {
+    path: 'criar-funcionario',
+    loadComponent: () => import('./pages/criar-funcionario/criar-funcionario.page').then( m => m.CriarFuncionarioPage)
+  },
+  {
+    path: 'relatorios',
+    loadComponent: () => import('./pages/relatorios/relatorios.page').then( m => m.RelatoriosPage)
+  },
+  {
+    path: 'relatorio-funcionarios',
+    loadComponent: () => import('./pages/relatorio-funcionarios/relatorio-funcionarios.page').then( m => m.RelatorioFuncionariosPage)
+  },
+
 
 ];

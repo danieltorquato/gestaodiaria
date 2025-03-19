@@ -161,7 +161,9 @@ ion-checkbox:hover {
   animation: fadeInUp 0.5s ease-out;
   animation-fill-mode: both;
 }
-
+.add-person{
+  font-size: 1.5rem;
+}
 /* Atraso na animação para cada card */
 .funcionario-card:nth-child(1) { animation-delay: 0.1s; }
 .funcionario-card:nth-child(2) { animation-delay: 0.2s; }

@@ -107,4 +107,29 @@ class FuncionarioController {
           $this->responderErro("Erro ao fechar quinzena: " . $e->getMessage(), 500);
       }
   }
+  public function criarFuncionario() {
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    // Extrai os dados do funcionário da requisição
+    $nome = $data['nome'] ?? null;
+    $foto = $data['foto'] ?? null;
+    $valorDiaria = $data['valor_diaria'] ?? null;
+
+    // Valida os dados recebidos
+    if (empty($nome) || empty($foto) || empty($valorDiaria)) {
+        http_response_code(400);
+        echo json_encode(["message" => "Todos os campos (nome, foto, valor_diaria) são obrigatórios"]);
+        return;
+    }
+
+    // Cria o funcionário
+    try {
+        $this->funcionarioModel->criarFuncionario($nome, $foto, $valorDiaria);
+        http_response_code(201);
+        echo json_encode(["message" => "Funcionário criado com sucesso"]);
+    } catch (\Exception $e) {
+        http_response_code(500);
+        echo json_encode(["message" => "Erro ao criar funcionário: " . $e->getMessage()]);
+    }
+}
 }

@@ -94,5 +94,32 @@ public function calcularTotalGasto($gastos) {
     }
     return $totalGasto;
 }
+public function listarQuinzenas() {
+  $sql = "SELECT id, data_fechamento FROM quinzenas ORDER BY data_fechamento DESC";
+  $stmt = $this->pdo->prepare($sql);
+  $stmt->execute();
+
+  return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function getRelatorioPorData($dataFechamento) {
+  $sql = "SELECT categoria, descricao, valor, data FROM historico_gastos WHERE data_fechamento = :dataFechamento ORDER BY data DESC";
+  $stmt = $this->pdo->prepare($sql);
+  $stmt->bindParam(':dataFechamento', $dataFechamento);
+  $stmt->execute();
+
+  $gastos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  if (!$gastos) {
+      return null;
+  }
+
+  $totalGasto = array_sum(array_column($gastos, 'valor'));
+
+  return [
+      'gastos' => $gastos,
+      'total_gasto' => $totalGasto
+  ];
+}
+
 
 }

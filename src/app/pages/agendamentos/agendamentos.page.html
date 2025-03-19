@@ -4,9 +4,15 @@
       <ion-back-button defaultHref="home"></ion-back-button>
     </ion-buttons>
     <ion-title>Agendamentos</ion-title>
+    <ion-buttons slot="end">
+    <ion-button class="add-person" (click)="navigateTo('criar-funcionario')"> <ion-icon name="person-add"></ion-icon></ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
+
   <div class="home-container">
     <input
       type="date"
